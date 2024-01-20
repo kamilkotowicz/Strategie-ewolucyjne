@@ -1,21 +1,46 @@
-import java.util.Arrays;
+enum IslandModel{
+    WITHOUT_ISLANDS,
+    RING_ISLANDS,
+    TORUS_ISLANDS
+}
+
+enum MigrantSelectionMode{
+    BEST_FITNESS,
+    RANDOM
+}
+
+enum MigrantDeletionMode{
+    WORST_FITNESS,
+    RANDOM
+}
+
+record Settings(int POPULATION_SIZE, int NUM_OF_CHILDREN, int DIMENSIONS, int ITERATIONS, IslandModel model,
+                MigrantSelectionMode selectionMode, MigrantDeletionMode deletionMode) {
+}
 public class Main {
+
     public static void main(String[] args) {
 
-        final int POPULATION_SIZE = 30;
-        final int DIMENSION = 10;
-        final int ITERATIONS = 1000;
-        final int CHILD_SIZE = 200;
+        Settings settings = new Settings(27, 189, 10, 1000,
+                IslandModel.RING_ISLANDS, MigrantSelectionMode.RANDOM, MigrantDeletionMode.RANDOM);
 
-        EvolutionaryAlgorithm algo = new EvolutionaryAlgorithm(POPULATION_SIZE, DIMENSION, ITERATIONS, CHILD_SIZE);
-        algo.initializePopulation();
-
-        for (int iteration = 0; iteration < ITERATIONS; iteration++) {
-            algo.generateChildren();
-            algo.selectSurvivors();
+        try {
+            IslandModels.run(settings);
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
 
-        double[] bestIndividual = algo.getBestIndividual();
-        System.out.println("Best individual: " + Arrays.toString(bestIndividual));
+
+    }
+
+    public static double calculate_fitness(double[] coords) {
+        // Funkcja celu, którą chcesz zminimalizować lub zmaksymalizować
+        // Tutaj przykład: funkcja kwadratowa suma (x-5)^2
+        double sum = 0;
+        for (double value : coords) {
+            sum += (value-5) * (value-5);
+        }
+        return -sum;
     }
 }
