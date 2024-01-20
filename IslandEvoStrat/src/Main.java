@@ -35,12 +35,7 @@ public class Main {
     }
 
     public static double calculate_fitness(double[] coords) {
-        // Funkcja celu, którą chcesz zminimalizować lub zmaksymalizować
-        // Tutaj przykład: funkcja kwadratowa suma (x-5)^2
-        double sum = 0;
-        for (double value : coords) {
-            sum += (value-5) * (value-5);
-        }
-        return -sum;
+        TestFunction testFunction = new RastriginFunction();
+        return -testFunction.calculateFitness(coords);
     }
 }
