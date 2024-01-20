@@ -21,8 +21,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Settings settings = new Settings(27, 189, 10, 1000,
-                IslandModel.RING_ISLANDS, MigrantSelectionMode.RANDOM, MigrantDeletionMode.RANDOM);
+        Settings settings = new Settings(270, 1890, 10, 1000,
+                IslandModel.TORUS_ISLANDS, MigrantSelectionMode.BEST_FITNESS, MigrantDeletionMode.WORST_FITNESS);
 
         try {
             IslandModels.run(settings);
