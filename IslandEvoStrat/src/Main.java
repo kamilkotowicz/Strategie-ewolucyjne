@@ -15,17 +15,17 @@ enum MigrantDeletionMode{
 }
 
 record Settings(int POPULATION_SIZE, int NUM_OF_CHILDREN, int DIMENSIONS, int ITERATIONS, IslandModel model,
-                MigrantSelectionMode selectionMode, MigrantDeletionMode deletionMode) {
+                MigrantSelectionMode selectionMode, MigrantDeletionMode deletionMode, boolean displaySolution) {
 }
 public class Main {
 
     public static void main(String[] args) {
 
         Settings settings = new Settings(270, 1890, 10, 1000,
-                IslandModel.TORUS_ISLANDS, MigrantSelectionMode.BEST_FITNESS, MigrantDeletionMode.WORST_FITNESS);
+                IslandModel.TORUS_ISLANDS, MigrantSelectionMode.BEST_FITNESS, MigrantDeletionMode.WORST_FITNESS, false);
 
         try {
-            IslandModels.run(settings);
+            IslandModels.test(settings);
         }
         catch(Exception e){
             e.printStackTrace();

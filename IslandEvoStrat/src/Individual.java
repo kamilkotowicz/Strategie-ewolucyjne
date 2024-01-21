@@ -28,7 +28,7 @@ public class Individual{
     }
 
     public Individual(){
-
+        fitness = Double.NEGATIVE_INFINITY;
     }
 
     public Individual(Individual other) {

@@ -3,7 +3,19 @@ import java.util.Arrays;
 import java.util.List;
 
 public class IslandModels {
-    public static void withoutIslands(Settings settings){
+
+    private static Individual getBestIndividual(Individual bestIndividual, Population island){
+        Individual bestIndividualOnIsland = island.getIndividualWithLargestFitness();
+        double bestFitnessOnIsland = bestIndividualOnIsland.fitness;
+        double bestFitness = bestIndividual.fitness;
+
+        if(bestFitnessOnIsland > bestFitness){
+            bestIndividual = bestIndividualOnIsland;
+        }
+        return bestIndividual;
+    }
+
+    public static double[] withoutIslands(Settings settings){
         final int DIMENSIONS = settings.DIMENSIONS();
         final int ITERATIONS = settings.ITERATIONS();
         final int POPULATION_SIZE = settings.POPULATION_SIZE();
@@ -12,17 +24,28 @@ public class IslandModels {
         Population population = new Population();
         population.initializePopulation(POPULATION_SIZE, DIMENSIONS);
 
+        double[] bestFitnesses = new double[ITERATIONS];
+
         for(int iteration = 0; iteration < ITERATIONS; ++iteration){
             population.nextGeneration(NUM_OF_CHILDREN, DIMENSIONS);
             population.keepSurvivors(POPULATION_SIZE);
+
+            Individual bestIndividualInIteration = population.getIndividualWithLargestFitness();
+            double bestFitnessInIteration = bestIndividualInIteration.fitness;
+            bestFitnesses[iteration] = bestFitnessInIteration;
         }
 
         Individual best_individual = population.getIndividualWithLargestFitness();
         double[] bestCoords = best_individual.coords;
-        System.out.println("Best solution: " + Arrays.toString(bestCoords));
+
+        if(settings.displaySolution()){
+            System.out.println("Best solution: " + Arrays.toString(bestCoords));
+        }
+
+        return bestFitnesses;
 
     }
-    public static void ringIslands(Settings settings){
+    public static double[] ringIslands(Settings settings){
         final int MIGRATION_INTERVAL = 10;
         final int NUM_OF_ISLANDS = 9;
         final int NUM_OF_MIGRANTS = 4;
@@ -38,6 +61,8 @@ public class IslandModels {
             islands[i] = new Population();
             islands[i].initializePopulation(POPULATION_SIZE_PER_ISLAND, DIMENSIONS);
         }
+
+        double[] bestFitnesses = new double[ITERATIONS];
 
         for(int iteration = 0; iteration < ITERATIONS; ++iteration){
             for(int i = 0; i < NUM_OF_ISLANDS; ++i){
@@ -82,27 +107,34 @@ public class IslandModels {
                 }
 
             }
+
+            Individual bestIndividualInIteration = new Individual();
+
+            for(int i = 0; i < NUM_OF_ISLANDS; ++i){
+                bestIndividualInIteration = getBestIndividual(bestIndividualInIteration, islands[i]);
+            }
+
+            double bestFitnessInIteration = bestIndividualInIteration.fitness;
+            bestFitnesses[iteration] = bestFitnessInIteration;
         }
 
         Individual bestIndividual = new Individual();
-        double bestFitness = Double.NEGATIVE_INFINITY;
 
         for(int i = 0; i < NUM_OF_ISLANDS; ++i){
-            Individual bestIndividualOnIsland = islands[i].getIndividualWithLargestFitness();
-            double bestFitnessOnIsland = bestIndividualOnIsland.fitness;
-
-            if(bestFitnessOnIsland > bestFitness){
-                bestFitness = bestFitnessOnIsland;
-                bestIndividual = bestIndividualOnIsland;
-            }
+            bestIndividual = getBestIndividual(bestIndividual, islands[i]);
         }
 
         double[] bestCoords = bestIndividual.coords;
-        System.out.println("Best solution: " + Arrays.toString(bestCoords));
+
+        if(settings.displaySolution()){
+            System.out.println("Best solution: " + Arrays.toString(bestCoords));
+        }
+
+        return bestFitnesses;
 
     }
 
-    public static void torusIslands(Settings settings){
+    public static double[] torusIslands(Settings settings){
         final int MIGRATION_INTERVAL = 10;
         final int NUM_OF_ISLANDS_PER_ROW = 3;
         final int NUM_OF_MIGRANTS = 4;
@@ -121,6 +153,8 @@ public class IslandModels {
                 islands[i][j].initializePopulation(POPULATION_SIZE_PER_ISLAND, DIMENSIONS);
             }
         }
+
+        double[] bestFitnesses = new double[ITERATIONS];
 
         for(int iteration = 0; iteration < ITERATIONS; ++iteration){
             for(int i = 0; i < NUM_OF_ISLANDS_PER_ROW; ++i){
@@ -183,36 +217,71 @@ public class IslandModels {
                 }
 
             }
+
+            Individual bestIndividualInIteration = new Individual();
+
+            for(int i = 0; i < NUM_OF_ISLANDS_PER_ROW; ++i){
+                for(int j = 0; j < NUM_OF_ISLANDS_PER_ROW; ++j){
+                    bestIndividualInIteration = getBestIndividual(bestIndividualInIteration, islands[i][j]);
+                }
+            }
+
+            double bestFitnessInIteration = bestIndividualInIteration.fitness;
+            bestFitnesses[iteration] = bestFitnessInIteration;
         }
 
         Individual bestIndividual = new Individual();
-        double bestFitness = Double.NEGATIVE_INFINITY;
 
         for(int i = 0; i < NUM_OF_ISLANDS_PER_ROW; ++i){
             for(int j = 0; j < NUM_OF_ISLANDS_PER_ROW; ++j){
-                Individual bestIndividualOnIsland = islands[i][j].getIndividualWithLargestFitness();
-                double bestFitnessOnIsland = bestIndividualOnIsland.fitness;
-
-                if(bestFitnessOnIsland > bestFitness){
-                    bestFitness = bestFitnessOnIsland;
-                    bestIndividual = bestIndividualOnIsland;
-                }
+                bestIndividual = getBestIndividual(bestIndividual, islands[i][j]);
             }
         }
 
         double[] bestCoords = bestIndividual.coords;
-        System.out.println("Best solution: " + Arrays.toString(bestCoords));
 
+        if(settings.displaySolution()){
+            System.out.println("Best solution: " + Arrays.toString(bestCoords));
+        }
+
+        return bestFitnesses;
     }
 
-    public static void run(Settings settings) throws Exception {
+    public static double[] run(Settings settings) throws Exception {
         IslandModel model = settings.model();
 
         switch (model) {
-            case WITHOUT_ISLANDS -> withoutIslands(settings);
-            case RING_ISLANDS -> ringIslands(settings);
-            case TORUS_ISLANDS -> torusIslands(settings);
+            case WITHOUT_ISLANDS -> {
+                return withoutIslands(settings);
+            }
+            case RING_ISLANDS -> {
+                return ringIslands(settings);
+            }
+            case TORUS_ISLANDS -> {
+                return torusIslands(settings);
+            }
             default -> throw new Exception("Island model doesn't exists");
         }
+    }
+
+    public static void test(Settings settings) throws Exception {
+        final int NUM_OF_INSTANCES = 10;
+
+        double [][] bestFitnesses = new double[NUM_OF_INSTANCES][settings.ITERATIONS()];
+
+        for(int i = 0; i < NUM_OF_INSTANCES; ++i){
+            bestFitnesses[i] = run(settings);
+        }
+
+        double[] meanBestFitness = new double[settings.ITERATIONS()];
+
+        for(int i = 0; i < settings.ITERATIONS(); ++i){
+            for(int j = 0; j < NUM_OF_INSTANCES; ++j){
+                meanBestFitness[i] += bestFitnesses[j][i] / NUM_OF_INSTANCES;
+            }
+        }
+
+        System.out.println("Mean best fitness: " + Arrays.toString(meanBestFitness));
+
     }
 }
