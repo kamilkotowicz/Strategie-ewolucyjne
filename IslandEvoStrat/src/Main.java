@@ -31,7 +31,6 @@ public class Main {
             e.printStackTrace();
         }
 
-
     }
 
     public static double calculate_fitness(double[] coords) {
