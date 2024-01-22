@@ -35,7 +35,7 @@ public class Main {
     }
 
     public static double calculate_fitness(double[] coords) {
-        TestFunction testFunction = new RastriginFunction();
-        return -testFunction.calculateFitness(coords);
+        TestFunction testFunction = new SquareFunction();
+        return testFunction.calculateFitness(coords);
     }
 }

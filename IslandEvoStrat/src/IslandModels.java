@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -282,6 +283,14 @@ public class IslandModels {
         }
 
         System.out.println("Mean best fitness: " + Arrays.toString(meanBestFitness));
+
+        SwingUtilities.invokeLater(() -> {
+            FitnessChart chart = new FitnessChart("Fitness Chart Example", meanBestFitness);
+            chart.setSize(600, 400);
+            chart.setLocationRelativeTo(null);
+            chart.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            chart.setVisible(true);
+        });
 
     }
 }
