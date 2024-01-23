@@ -180,6 +180,7 @@ public class IslandModels {
 
                         // Usuwane jest 3 razy wiecej najgorszych niz najlepszych, aby rozmiar populacji sie nie zmienil
                         // poniewaz w torusie kazda wyspa ma 4 sasiadow
+
                         k_worst_per_island[i][j] = (deletionMode == MigrantDeletionMode.WORST_FITNESS) ?
                                 islands[i][j].getKIndividualsWithSmallestFitness(NUM_OF_MIGRANTS * 3) : islands[i][j].getKRandomIndividuals(NUM_OF_MIGRANTS * 3);
 

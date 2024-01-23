@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
 
         Settings settings = new Settings(270, 1890, 10, 1000,
-                IslandModel.TORUS_ISLANDS, MigrantSelectionMode.BEST_FITNESS, MigrantDeletionMode.WORST_FITNESS, false);
+                IslandModel.RING_ISLANDS, MigrantSelectionMode.BEST_FITNESS, MigrantDeletionMode.WORST_FITNESS, false);
 
         try {
             IslandModels.test(settings);
@@ -34,7 +34,7 @@ public class Main {
     }
 
     public static double calculate_fitness(double[] coords) {
-        TestFunction testFunction = new SquareFunction();
+        TestFunction testFunction = new AckleyFunction();
         return testFunction.calculateFitness(coords);
     }
 }
